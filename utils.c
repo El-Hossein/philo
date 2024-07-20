@@ -32,7 +32,11 @@ int	printf_philo_state(t_philos *philo, char *str, int is)
 {
 	pthread_mutex_lock(&philo->data->print_t);
 	if(!is_died(philo) || is == 0)
-		return (printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str), pthread_mutex_unlock(&philo->data->print_t), 0);
+	{
+		printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str);
+		pthread_mutex_unlock(&philo->data->print_t);
+		return (0);
+	}
 	pthread_mutex_unlock(&philo->data->print_t);
 	return (1);
 }

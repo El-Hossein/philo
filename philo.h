@@ -36,7 +36,7 @@ typedef struct s_philos
     pthread_mutex_t	*forks_right;
     pthread_mutex_t	*forks_left;
 	int				ph_id;
-   	int  			try;
+   	int  			nbr_of_time_to_eat;
 	pthread_mutex_t eat_t;
    	size_t  		eating_time;
 	pthread_t		thred;
