@@ -175,9 +175,9 @@ void    monitoring(t_philos *philos)
 		int c = 0;
         while (i < (*philos).data->number_of_philosophers)
         {
-			pthread_mutex_lock(&philos[i].data->dead_t);
+			pthread_mutex_lock(&philos->data->dead_t);
 			int time_die = philos[i].data->time_to_die;
-			pthread_mutex_unlock(&philos[i].data->dead_t);
+			pthread_mutex_unlock(&philos->data->dead_t);
 			pthread_mutex_lock(&philos[i].eat_t);
 			size_t time_eating = get_current_time() - philos[i].eating_time;
 			pthread_mutex_unlock(&philos[i].eat_t);
@@ -189,7 +189,9 @@ void    monitoring(t_philos *philos)
 				return ;
 			if (time_eating > time_die)
 			{
+    			pthread_mutex_lock(&philos->data->dead_t);
                 philos[i].data->is_dead = 1;
+    			pthread_mutex_unlock(&philos->data->dead_t);
                 printf_philo_state(&philos[i], "is dead", 0);
                 return ;
 			}
