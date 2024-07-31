@@ -1,5 +1,5 @@
-#ifndef PHILO_H
-#define PHILO_H
+#ifndef PHILO_BONUS_H
+#define PHILO_BONUS_H
 
 #include <stdio.h>
 #include <limits.h>
@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-
+#include <semaphore.h>
 typedef struct s_data
 {
+    pthread_mutex_t sleep_them_t;
+   	int  sleep_them;
 	//
    	int  number_of_philosophers;
    	int  time_to_die;

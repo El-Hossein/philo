@@ -1,4 +1,4 @@
-#include "philo.h"
+#include "philo_bonus.h"
 
 // int	wait_all(t_philos *philo)
 // {
@@ -20,6 +20,8 @@
 // 	return  (0);
 // }
 
+sem_t semaphore;
+
 int init_data(t_data *data, int ac, char **av)
 {
     data->number_of_philosophers = ft_atoi(av[1]);
@@ -30,6 +32,7 @@ int init_data(t_data *data, int ac, char **av)
 	if (ac == 6)
         	data->nbr_of_time_to_eat = ft_atoi(av[5]);
     data->is = 0;
+    data->sleep_them = 0;
     data->is_dead = 0;
     data->time_start = get_current_time();
     
@@ -56,6 +59,7 @@ void	create_limk_phil(t_philos **philos, t_data data, char **av, int ac)
     }
 	if (pthread_mutex_init(&data.print_t, NULL) != 0
         || pthread_mutex_init(&data.dead_t, NULL) != 0
+        || pthread_mutex_init(&data.sleep_them_t, NULL) != 0
         || pthread_mutex_init(&data.is_t, NULL) != 0)
 	{
 		printf("Failed to initialize mutex\n");
@@ -98,7 +102,7 @@ void	create_limk_phil(t_philos **philos, t_data data, char **av, int ac)
 
 void	ft_sleep(t_philos *philo)
 {
-	if(printf_philo_state(philo, "is sleeping", 1))
+	if (printf_philo_state(philo, "is sleeping", 1))
 		return ;
 	ft_usleep(philo, philo->data->time_to_sleep);
 	return ;
@@ -106,7 +110,7 @@ void	ft_sleep(t_philos *philo)
 
 void	ft_think(t_philos *philo)
 {
-	if(printf_philo_state(philo, "is thinking", 1))
+	if (printf_philo_state(philo, "is thinking", 1))
 		return ;
 	return ;
 }
@@ -114,8 +118,12 @@ void	ft_think(t_philos *philo)
 void	ft_eat(t_philos *philo)
 {
 	pthread_mutex_lock(philo->forks_left);
-	printf_philo_state(philo, "has taken a fork1", 1);
-
+	printf_philo_state(philo, "has taken a fork", 1);
+	if(philo->data->number_of_philosophers == 1)
+	{
+		pthread_mutex_unlock(philo->forks_left);
+		return ;
+	}
 	pthread_mutex_lock(philo->forks_right);
 	printf_philo_state(philo, "has taken a fork", 1);
 
@@ -131,27 +139,45 @@ void	ft_eat(t_philos *philo)
 	pthread_mutex_unlock(philo->forks_right);
 
 	pthread_mutex_lock(&philo->data->is_t);
-	if(philo->nbr_of_time_to_eat > 0)
+	if (philo->nbr_of_time_to_eat > 0)
 		philo->nbr_of_time_to_eat--;
 	pthread_mutex_unlock(&philo->data->is_t);
 }
+
+// int	check_al(t_philos *philo)
+// {
+// 	pthread_mutex_lock(&philo->data->sleep_them_t);
+// 	if (philo->data->sleep_them ==1)
+// 		return (pthread_mutex_unlock(&philo->data->sleep_them_t), 1);
+// 	pthread_mutex_unlock(&philo->data->sleep_them_t);
+// 	return (0);
+// }
 
 void	*routine(void *arg)
 {
 	t_philos *philo = (t_philos *)arg;
 	// while(wait_all(philo) != 1)
 	// 	;
-	if(philo->ph_id % 2 == 0)
-		ft_usleep(philo, philo->data->time_to_eat);
+	// while (1)
+	// {
+	// 	if (check_al(philo) == 1)
+	// 		break;
+	// 	if (is_died(philo))
+	// 		return (NULL);
+	// }
+	
+	// if (philo->ph_id % 2 == 0)
+	// 	ft_usleep(philo, philo->data->time_to_eat);
 
-	while (philo->nbr_of_time_to_eat != 0 && philo->nbr_of_time_to_eat != -2)
+	while (philo->data->number_of_philosophers != 0)
 	{
-		if(is_died(philo))
+		if (is_died(philo))
 			return (NULL);
 		ft_eat(philo);
-
+		if(philo->data->number_of_philosophers == 1)
+			return NULL;
 		pthread_mutex_lock(&philo->data->is_t);
-		if(philo->nbr_of_time_to_eat == 0)
+		if (philo->nbr_of_time_to_eat == 0)
 		{
 			philo->nbr_of_time_to_eat = -2;
 			pthread_mutex_unlock(&philo->data->is_t);
@@ -167,7 +193,6 @@ void	*routine(void *arg)
 
 void    monitoring(t_philos *philos)
 {
-	
     while (1)
     {
         int i  = 0;
@@ -185,7 +210,7 @@ void    monitoring(t_philos *philos)
 			if (philos[i].nbr_of_time_to_eat == -2)
 				c++;
 			pthread_mutex_unlock(&philos->data->is_t);
-			if(c == philos->data->number_of_philosophers)
+			if (c == philos->data->number_of_philosophers)
 				return ;
 			if (time_eating > time_die)
 			{
@@ -197,29 +222,33 @@ void    monitoring(t_philos *philos)
 			}
             i++;
         }
-		// usleep(500);
     }
 }
 
 int	create_thread(t_philos *philos)
 {
 	int	i;
-
+	pthread_t th[philos->data->number_of_philosophers];
+	sem_init(semaphore, philos->data->number_of_philosophers, philos->data->number_of_philosophers / 2);
 	i = 0;
 	while (i < philos->data->number_of_philosophers)
 	{
-		if(pthread_create(&philos[i].thred, NULL, &routine, (void*)&philos[i]) != 0)
+		if (pthread_create(&philos[i].thred, NULL, &routine, (void*)&philos[i]) != 0)
 			return (perror("Failed to create thread"), 1);
 		i++;
 	}
+	pthread_mutex_lock(&philos->data->sleep_them_t);
+	philos->data->sleep_them = 1;
+	pthread_mutex_unlock(&philos->data->sleep_them_t);
     monitoring(philos);
 	i = 0;
 	while (i < philos->data->number_of_philosophers)
 	{
-		if(pthread_join(philos[i].thred, NULL) != 0)
+		if (pthread_join(philos[i].thred, NULL) != 0)
 			return (perror("Failed to create thread"), 2);
 		i++;
 	}
+	sem_destroy(&semaphore);
 	return (0);
 }
 
@@ -244,6 +273,8 @@ int main(int ac, char **av)
 	{
 	    if (init_data(&data, ac, av) == 1)
 	        return (printf("bad paramme\n"), 1);
+		if(data.nbr_of_time_to_eat == 0 || data.number_of_philosophers == 0)
+			return 0;
 		create_limk_phil(&philos, data, av, ac);
 		create_thread(philos);
 		ft_detach(philos);
