@@ -1,4 +1,4 @@
-#include "philo_bonus.h"
+#include "philo.h"
 
 int ft_atoi(char *str)
 {
@@ -30,40 +30,26 @@ size_t	get_current_time(void)
 
 int	printf_philo_state(t_philos *philo, char *str, int is)
 {
-	sem_wait(philo->data->print);
+	pthread_mutex_lock(&philo->data->print_t);
 	if(!is_died(philo) || is == 0)
 	{
-		sem_post(philo->data->print);
 		printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str);
+		pthread_mutex_unlock(&philo->data->print_t);
 		return (0);
 	}
-	sem_post(philo->data->print);
+	pthread_mutex_unlock(&philo->data->print_t);
 	return (1);
 }
 
 int	is_died(t_philos *philo)
 {
 	// int i;
-	// sem_wait(philo->data->dead);
-	// i = philo->data->is_dead;
-	// sem_post(philo->data->dead);
-	// return (i);
 
-	sem_wait(philo->data->dead);
-	int time_die = philo->data->time_to_die;
-	sem_post(philo->data->dead);
-	sem_wait(philo->data->eating);
-	size_t time_eating = get_current_time() - philo->eating_time;
-	sem_post(philo->data->eating);
-	if (time_eating > time_die)
-	{
-		sem_wait(philo->data->dead);
-		philo->data->is_dead = 1;
-		sem_post(philo->data->dead);
-		printf_philo_state(philo, "is dead", 0);
-		return (1);
-	}
-	return (0);
+    // pthread_mutex_lock(&philo->data->dead_t);
+	// i = philo->data->is_dead;
+    // pthread_mutex_unlock(&philo->data->dead_t);
+	// return (i);
+	
 }
 
 int	ft_usleep(t_philos *philo, size_t milliseconds)
