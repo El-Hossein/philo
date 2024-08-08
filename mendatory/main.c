@@ -34,9 +34,9 @@ int init_data(t_data *data, int ac, char **av)
     data->is_dead = 0;
     data->time_start = get_current_time();
     
-	if (data->number_of_philosophers < 0 || data->time_to_die < 0
-		|| data->time_to_eat < 0 || data->time_to_sleep < 0
-		|| data->nbr_of_time_to_eat < 0 && data->nbr_of_time_to_eat != -1)
+	if (data->number_of_philosophers <= 0 || data->time_to_die <= 0
+		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
+		|| data->nbr_of_time_to_eat <= 0 && data->nbr_of_time_to_eat != -1)
 		return (1);
 	return (0);
 }

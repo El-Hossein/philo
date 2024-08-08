@@ -1,5 +1,6 @@
 #include "philo_bonus.h"
 
+
 int init_data(t_data *data, int ac, char **av)
 {
 	data->number_of_philosophers = ft_atoi(av[1]);
@@ -31,6 +32,7 @@ void	create_limk_phil(t_philos **philos, t_data data, char **av, int ac)
 		(*philos)[i].data = &data;
 		(*philos)[i].ph_id = i + 1;
 		(*philos)[i].nbr_of_time_to_eat = -1;
+		(*philos)[i].time_start = get_current_time();
 		if (ac == 6)
 			(*philos)[i].nbr_of_time_to_eat = ft_atoi(av[5]);
 		i++;
@@ -55,86 +57,66 @@ void	ft_think(t_philos *philo)
 void	ft_eat(t_philos *philo)
 {
 	sem_wait(philo->data->forks);
-	printf_philo_state(philo, "has taken a fork", 1);
-	if(philo->data->number_of_philosophers == 1)
-	{
-		sem_post(philo->data->forks);
-		return ;
-	}
+	printf_philo_state(philo, "has taken a fork1", 1);
+	
 	sem_wait(philo->data->forks);
 	printf_philo_state(philo, "has taken a fork", 1);
 
 	printf_philo_state(philo, "is eating", 1);
 
-	// sem_wait(philo->data->eating);
 	philo->eating_time =  get_current_time();
-	// sem_post(philo->data->eating);
-	
 	ft_usleep(philo, philo->data->time_to_eat);
 
 	sem_post(philo->data->forks);
 	sem_post(philo->data->forks);
 
-	sem_wait(philo->eat_ti);
 	if (philo->nbr_of_time_to_eat > 0)
 		philo->nbr_of_time_to_eat--;
-	sem_post(philo->eat_ti);
 }	
 
 void    routin(t_philos *philos)
 {
-	philos->data->time_start = get_current_time();
-	printf("%zu\n", philos->eating_time);
-	puts("+++");
+	if(philos->data->number_of_philosophers == 1)
+	{
+		printf_philo_state(philos, "has taken a fork1", 1);
+		ft_usleep(philos, philos->data->time_to_die);
+		int i = 0;
+		while (i < philos->data->number_of_philosophers)
+		{
+			sem_post(philos->data->dead);
+			i++;
+		}
+		printf("%lu %d  %s\n", get_current_time() - philos->time_start , philos->ph_id, "dead");
+		exit(5);
+	}
 	while (philos->data->number_of_philosophers != 0)
 	{
 		if (is_died(philos))
 			exit(2) ;
 		ft_eat(philos);
-		if(philos->data->number_of_philosophers == 1)
-			exit(5) ;
-		sem_wait(philos->eat_ti);
 		if (philos->nbr_of_time_to_eat == 0)
 		{
 			philos->nbr_of_time_to_eat = -2;
-			sem_post(philos->eat_ti);
-			exit(5) ;
+			sem_post(philos->data->dead);
+			return ;
 		}
-		sem_post(philos->eat_ti);
 		ft_sleep(philos);
 		ft_think(philos);
 	}
 	exit(0);
 }
 
-// void create_process(t_data data, t_philos *philos)
-// {
-// 	int i = 0;
-// 	int pid[200];
-// 	int status;
-// 	while (i < data.number_of_philosophers)
-// 	{
-// 		pid[i] = fork();
-// 		if (pid[i] == 0)
-// 		{
-// 			routin(&philos[i]);
-// 			exit(1);
-// 		}
-// 		else if (pid[i] == -1)
-// 		{
-// 			perror("fork1342   ");
-// 			return;
-// 		}
-// 		else
-// 			waitpid(pid[i], &status, 0);
-// 		printf("%d\n", status);
-// 		i++;
-// 	}
-// 	for (int j = 0; j < data.number_of_philosophers; j++)
-// 	{
-// 		wait(NULL);
-// 	}
-// }
+void	kill_all(t_philos *philos, int pid[200])
+{
+	int i = 0;
+	while (i < philos->data->number_of_philosophers)
+	{
+		kill(pid[i], SIGINT);
+		i++;
+	}
+	
+}
+
 
 void create_process(t_data data, t_philos *philos)
 {
@@ -157,18 +139,13 @@ void create_process(t_data data, t_philos *philos)
         }
         i++;
     }
-
-    for (int j = 0; j < data.number_of_philosophers; j++)
-    {
-        waitpid(pid[j], &status, 0);
-        if (WIFEXITED(status))
-        {
-            int exit_code = WEXITSTATUS(status);
-            printf("Child %d exited = %d\n", pid[j], exit_code);
-        }
-        else
-            printf("Child %d exited bad\n", pid[j]);
-    }
+	i = 0;
+	while (i < philos->data->number_of_philosophers)
+	{
+		sem_wait(philos->data->dead);
+		i++;
+	}
+	kill_all(philos, pid);
 }
 
 int main(int ac, char **av)
@@ -182,41 +159,22 @@ int main(int ac, char **av)
 			return (printf("bad parameter\n"), 1);
 		if (data.nbr_of_time_to_eat == 0 || data.number_of_philosophers == 0)
 			return 0;
-		create_limk_phil(&philos, data, av, ac);
 		
 		sem_unlink("forks");
-		// sem_unlink("eating");
 		sem_unlink("dead");
-		sem_unlink("sleep");
-		sem_unlink("eat_ti");
-		// sem_unlink("print");
 
-		philos->data->forks = sem_open("forks", O_CREAT | O_EXCL, 0700, data.number_of_philosophers);
-		// philos->data->eating = sem_open("eating", O_CREAT | O_EXCL, 0700, 1);
-		philos->data->dead = sem_open("dead", O_CREAT | O_EXCL, 0700, 1);
-		philos->data->sleep = sem_open("sleep", O_CREAT | O_EXCL, 0700, 1);
-		philos->eat_ti = sem_open("eat_ti", O_CREAT | O_EXCL, 0700, 1);
-		// philos->data->print = sem_open("print", O_CREAT | O_EXCL, 0700, 1);
-		if (philos->data->forks == SEM_FAILED
-			|| philos->data->dead == SEM_FAILED || philos->data->sleep == SEM_FAILED || philos->eat_ti == SEM_FAILED)
+		data.forks = sem_open("forks", O_CREAT | O_EXCL, 0700, data.number_of_philosophers);
+		data.dead = sem_open("dead", O_CREAT | O_EXCL, 0700, 0);
+		if (data.forks == SEM_FAILED || data.dead == SEM_FAILED)
 		{
 			perror("sem_open");
 			return 1;
 		}
-		// if (philos->data->forks == SEM_FAILED || philos->data->eating == SEM_FAILED
-		// 	|| philos->data->dead == SEM_FAILED || philos->data->sleep == SEM_FAILED || philos->eat_ti == SEM_FAILED)
-		// {
-		// 	perror("sem_open");
-		// 	return 1;
-		// }
+		create_limk_phil(&philos, data, av, ac);
 		create_process(data, philos);
-
+		
 		sem_unlink("forks");
-		// sem_unlink("print");
-		// sem_unlink("eating");
 		sem_unlink("dead");
-		sem_unlink("sleep");
-		sem_unlink("eat_ti");
 
 		return 0;
 	}

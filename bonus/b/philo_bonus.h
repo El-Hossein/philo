@@ -13,22 +13,14 @@
 
 typedef struct s_data
 {
-   	int  sleep_them;
-	//
    	int  number_of_philosophers;
    	int  time_to_die;
    	int  time_to_eat;
    	int  time_to_sleep;
    	int  nbr_of_time_to_eat;
-	//
-   	size_t  time_start;
-   	//
 	int  is_dead;
 	sem_t *forks;
-	// sem_t *eating;
 	sem_t *dead;
-	sem_t *sleep;
-	// sem_t *print;
 } t_data;
 
 typedef struct s_philos
@@ -36,9 +28,8 @@ typedef struct s_philos
 	int				ph_id;
    	int  			nbr_of_time_to_eat;
    	size_t  		eating_time;
-	pthread_t		thred;
+   	size_t  		time_start;
 	t_data			*data;
-	sem_t *eat_ti;
 }	t_philos;
 
 int ft_atoi(char *str);

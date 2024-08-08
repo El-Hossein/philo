@@ -30,9 +30,9 @@ size_t	get_current_time(void)
 
 int	printf_philo_state(t_philos *philo, char *str, int is)
 {
-	if(!is_died(philo))
+	if(!is_died(philo) || is == 0)
 	{
-		printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str);
+		printf("%lu %d  %s\n", get_current_time() - philo->time_start , philo->ph_id, str);
 		return (0);
 	}
 	return (1);
@@ -40,25 +40,19 @@ int	printf_philo_state(t_philos *philo, char *str, int is)
 
 int	is_died(t_philos *philo)
 {
-	// int i;
-	// sem_wait(philo->data->dead);
-	// i = philo->data->is_dead;
-	// sem_post(philo->data->dead);
-	// return (i);
-
-	sem_wait(philo->data->dead);
 	int time_die = philo->data->time_to_die;
-	sem_post(philo->data->dead);
-	// sem_wait(philo->data->eating);
 	size_t time_eating = get_current_time() - philo->eating_time;
-	// sem_post(philo->data->eating);
-	if (time_eating > time_die)
+	
+	if (time_eating > time_die && philo->eating_time != 0)
 	{
-		sem_wait(philo->data->dead);
-		philo->data->is_dead = 1;
-		sem_post(philo->data->dead);
-		printf_philo_state(philo, "is dead", 0);
-		exit(3);
+		int i = 0;
+		while (i < philo->data->number_of_philosophers)
+		{
+			sem_post(philo->data->dead);
+			i++;
+		}
+		printf("%lu %d  %s\n", get_current_time() - philo->time_start , philo->ph_id, "dead");
+		return (1);
 	}
 	return (0);
 }
