@@ -1,9 +1,9 @@
 #include "philo_bonus.h"
 
-int ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
-	long nbr;
-	int i;
+	long	nbr;
+	int		i;
 
 	nbr = 0;
 	i = 0;
@@ -30,9 +30,14 @@ size_t	get_current_time(void)
 
 int	printf_philo_state(t_philos *philo, char *str, int is)
 {
-	if(!is_died(philo))
+	size_t	t_st;
+
+	t_st = philo->time_start;
+	if (is_died(philo) == 0 || is == 0)
 	{
-		printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str);
+		sem_wait(philo->data->print);
+		printf("%lu %d %s\n", get_current_time() - t_st, philo->ph_id, str);
+		sem_post(philo->data->print);
 		return (0);
 	}
 	return (1);
@@ -40,25 +45,25 @@ int	printf_philo_state(t_philos *philo, char *str, int is)
 
 int	is_died(t_philos *philo)
 {
-	// int i;
-	// sem_wait(philo->data->dead);
-	// i = philo->data->is_dead;
-	// sem_post(philo->data->dead);
-	// return (i);
+	size_t	time_die;
+	size_t	time_eating;
+	int		dead_count;
+	size_t	t_st;
 
-	sem_wait(philo->data->dead);
-	int time_die = philo->data->time_to_die;
-	sem_post(philo->data->dead);
-	// sem_wait(philo->data->eating);
-	size_t time_eating = get_current_time() - philo->eating_time;
-	// sem_post(philo->data->eating);
-	if (time_eating > time_die)
+	t_st = philo->time_start;
+	time_die = philo->data->time_to_die;
+	time_eating = get_current_time() - philo->eating_time;
+	if (time_eating > time_die && philo->eating_time != 0)
 	{
-		sem_wait(philo->data->dead);
-		philo->data->is_dead = 1;
-		sem_post(philo->data->dead);
-		printf_philo_state(philo, "is dead", 0);
-		exit(3);
+		sem_wait(philo->data->print);
+		dead_count = 0;
+		while (dead_count < philo->data->number_of_philosophers)
+		{
+			sem_post(philo->data->dead);
+			dead_count++;
+		}
+		printf("%lu %d %s\n", get_current_time() - t_st, philo->ph_id, "died");
+		exit (1);
 	}
 	return (0);
 }

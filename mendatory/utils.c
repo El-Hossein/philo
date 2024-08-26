@@ -1,9 +1,9 @@
 #include "philo.h"
 
-int ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
-	long nbr;
-	int i;
+	long	nbr;
+	int		i;
 
 	nbr = 0;
 	i = 0;
@@ -30,10 +30,13 @@ size_t	get_current_time(void)
 
 int	printf_philo_state(t_philos *philo, char *str, int is)
 {
+	size_t	t_start;
+
+	t_start = philo->data->time_start;
 	pthread_mutex_lock(&philo->data->print_t);
-	if(!is_died(philo) || is == 0)
+	if (!is_died(philo) || is == 0)
 	{
-		printf("%lu %d  %s\n", get_current_time() - philo->data->time_start , philo->ph_id, str);
+		printf("%lu %d %s\n", get_current_time() - t_start, philo->ph_id, str);
 		pthread_mutex_unlock(&philo->data->print_t);
 		return (0);
 	}
@@ -43,11 +46,11 @@ int	printf_philo_state(t_philos *philo, char *str, int is)
 
 int	is_died(t_philos *philo)
 {
-	int i;
+	int	i;
 
-    pthread_mutex_lock(&philo->data->dead_t);
+	pthread_mutex_lock(&philo->data->dead_t);
 	i = philo->data->is_dead;
-    pthread_mutex_unlock(&philo->data->dead_t);
+	pthread_mutex_unlock(&philo->data->dead_t);
 	return (i);
 }
 
