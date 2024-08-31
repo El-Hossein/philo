@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:16:35 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/27 18:16:36 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/08/31 22:42:23 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,15 @@ void	kill_all(t_philos *philos, int pid[200])
 void	create_process(t_data data, t_philos *philos)
 {
 	int	i;
-	int	pid[200];
+	int	pid[0];
 
+	pid[data.number_of_philosophers];
 	i = 0;
 	while (i < data.number_of_philosophers)
 	{
 		pid[i] = fork();
 		if (pid[i] == 0)
-		{
 			routin(&philos[i]);
-		}
 		else if (pid[i] == -1)
 		{
 			perror("fork");

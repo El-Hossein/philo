@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:16:07 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/27 18:44:09 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/08/29 01:27:35 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <limits.h>
 # include <pthread.h>
 # include <sys/time.h>
-# include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
 
@@ -25,23 +24,17 @@ typedef struct s_data
 {
 	pthread_mutex_t	sleep_them_t;
 	int				sleep_them;
-	//
 	int				number_of_philosophers;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				nbr_of_time_to_eat;
-	//
 	size_t			time_start;
-	//
 	int				is_dead;
 	int				is;
 	pthread_mutex_t	print_t;
 	pthread_mutex_t	dead_t;
 	pthread_mutex_t	is_t;
-	//
-	// philo
-	//
 	pthread_mutex_t	*forks;
 }	t_data;
 

@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:15:50 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/27 18:16:12 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/08/29 01:46:55 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,12 @@ void	ft_detach(t_philos *philos)
 	int	i;
 
 	i = 0;
+	pthread_mutex_destroy(&philos->eat_t);
+	pthread_mutex_destroy(philos->forks_left);
+	pthread_mutex_destroy(philos->forks_right);
 	pthread_mutex_destroy(&philos->data->print_t);
+	pthread_mutex_destroy(&philos->data->dead_t);
+	pthread_mutex_destroy(&philos->data->is_t);
 	while (i < philos->data->number_of_philosophers)
 	{
 		pthread_mutex_destroy(&philos->data->forks[i]);
