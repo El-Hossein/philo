@@ -27,11 +27,13 @@ void	kill_all(t_philos *philos, int pid[200])
 void	create_process(t_data data, t_philos *philos)
 {
 	int	i;
-	int	pid[0];
+	int	*pid;
 
-	pid[data.number_of_philosophers];
-	i = 0;
-	while (i < data.number_of_philosophers)
+	pid = (int *)malloc(data.number_of_philosophers * sizeof(int));
+	if (pid == NULL)
+		exit(EXIT_FAILURE);
+	i = -1;
+	while (++i < data.number_of_philosophers)
 	{
 		pid[i] = fork();
 		if (pid[i] == 0)
@@ -39,17 +41,15 @@ void	create_process(t_data data, t_philos *philos)
 		else if (pid[i] == -1)
 		{
 			perror("fork");
+			free(pid);
 			return ;
 		}
-		i++;
 	}
-	i = 0;
-	while (i < data.number_of_philosophers)
-	{
+	i = -1;
+	while (++i < data.number_of_philosophers)
 		sem_wait(philos->data->dead);
-		i++;
-	}
 	kill_all(philos, pid);
+	free(pid);
 }
 
 int	init_sem(t_data *data)
