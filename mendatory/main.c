@@ -41,13 +41,11 @@ void	ft_detach(t_philos *philos)
 {
 	int	i;
 
-	i = 0;
 	pthread_mutex_destroy(&philos->eat_t);
-	pthread_mutex_destroy(philos->forks_left);
-	pthread_mutex_destroy(philos->forks_right);
 	pthread_mutex_destroy(&philos->data->print_t);
 	pthread_mutex_destroy(&philos->data->dead_t);
 	pthread_mutex_destroy(&philos->data->is_t);
+	i = 0;
 	while (i < philos->data->number_of_philosophers)
 	{
 		pthread_mutex_destroy(&philos->data->forks[i]);
@@ -66,7 +64,7 @@ int	main(int ac, char **av)
 			return (printf("bad paramme\n"), 1);
 		if (data.nbr_of_time_to_eat == 0 || data.number_of_philosophers == 0)
 			return (0);
-		create_limk_phil(&philos, data, av, ac);
+		create_limk_phil(&philos, &data, av, ac);
 		create_thread(philos);
 		ft_detach(philos);
 		free(philos);

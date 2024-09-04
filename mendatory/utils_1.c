@@ -57,31 +57,6 @@ void	init_forks(t_philos **philos, t_data *data)
 	}
 }
 
-void	init_forks_1(t_philos **philos, t_data *data)
-{
-	int	i;
-
-	if (pthread_mutex_init(&data->print_t, NULL) != 0
-		|| pthread_mutex_init(&data->dead_t, NULL) != 0
-		|| pthread_mutex_init(&data->sleep_them_t, NULL) != 0
-		|| pthread_mutex_init(&data->is_t, NULL) != 0)
-	{
-		printf("Failed to initialize mutex\n");
-		exit(1);
-	}
-	i = 0;
-	while (i < data->number_of_philosophers)
-	{
-		if (pthread_mutex_init(&data->forks[i], NULL) != 0
-			|| pthread_mutex_init(&(*philos)[i].eat_t, NULL) != 0)
-		{
-			printf("Failed to initialize mutex %d\n", i);
-			exit(1);
-		}
-		i++;
-	}
-}
-
 void	init_philo(t_philos **philos, t_data *data, int ac, char **av)
 {
 	int	i;
@@ -108,21 +83,23 @@ void	init_philo(t_philos **philos, t_data *data, int ac, char **av)
 	}
 }
 
-void	create_limk_phil(t_philos **philos, t_data data, char **av, int ac)
+void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
 {
-	*philos = malloc(data.number_of_philosophers * sizeof(t_philos));
+	int	nbr_philo;
+
+	nbr_philo = data->number_of_philosophers;
+	*philos = malloc(nbr_philo * sizeof(t_philos));
 	if (*philos == NULL)
 	{
 		printf("Memory allocation failed\n");
 		exit(1);
 	}
-	data.forks = malloc(data.number_of_philosophers * sizeof(pthread_mutex_t));
-	if (data.forks == NULL)
+	data->forks = malloc(nbr_philo * sizeof(pthread_mutex_t));
+	if (data->forks == NULL)
 	{
 		printf("Memory allocation failed for forks\n");
 		exit(1);
 	}
-	init_forks(philos, &data);
-	init_forks_1(philos, &data);
-	init_philo(philos, &data, ac, av);
+	init_forks(philos, data);
+	init_philo(philos, data, ac, av);
 }

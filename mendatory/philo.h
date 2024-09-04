@@ -58,7 +58,7 @@ int		ft_usleep(t_philos *philo, size_t milliseconds);
 void	*routine(void *arg);
 void	monitoring(t_philos *philos);
 int		init_data(t_data *data, int ac, char **av);
-void	create_limk_phil(t_philos **philos, t_data data, char **av, int ac);
+void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac);
 void	monitoring(t_philos *philos);
 
 #endif
