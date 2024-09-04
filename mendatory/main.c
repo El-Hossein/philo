@@ -48,11 +48,12 @@ void	ft_detach(t_philos *philos)
 	i = 0;
 	while (i < philos->data->number_of_philosophers)
 	{
+		pthread_mutex_destroy(&philos[i].eat_t);
 		pthread_mutex_destroy(&philos->data->forks[i]);
 		i++;
 	}
+	free(philos->data->forks);
 }
-
 int	main(int ac, char **av)
 {
 	t_philos	*philos;

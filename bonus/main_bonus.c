@@ -85,9 +85,10 @@ int	main(int ac, char **av)
 			return (1);
 		create_limk_phil(&philos, data, av, ac);
 		create_process(data, philos);
-		sem_unlink("forks");
-		sem_unlink("dead");
-		sem_unlink("print");
+		sem_close(data.forks);
+		sem_close(data.dead);
+		sem_close(data.print);
+		free(philos);
 		return (0);
 	}
 	return (1);

@@ -33,7 +33,7 @@ void	routin(t_philos *philos)
 	}
 	while (philos->data->number_of_philosophers != 0)
 	{
-		if (is_died(philos))
+	if (is_died(philos))
 			exit (2);
 		ft_eat(philos);
 		if (philos->nbr_of_time_to_eat == 0)
