@@ -25,7 +25,7 @@ void	one_philo(t_philos *philos)
 
 void	routin(t_philos *philos)
 {
-	ft_think(philos);
+	// ft_think(philos);
 	if (philos->data->number_of_philosophers == 1)
 	{
 		one_philo(philos);
