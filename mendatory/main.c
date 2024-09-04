@@ -54,6 +54,7 @@ void	ft_detach(t_philos *philos)
 	}
 	free(philos->data->forks);
 }
+
 int	main(int ac, char **av)
 {
 	t_philos	*philos;

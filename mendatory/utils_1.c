@@ -83,23 +83,23 @@ void	init_philo(t_philos **philos, t_data *data, int ac, char **av)
 	}
 }
 
-	void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
-	{
-		int	nbr_philo;
+void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
+{
+	int	nbr_philo;
 
-		nbr_philo = data->number_of_philosophers;
-		*philos = malloc(nbr_philo * sizeof(t_philos));
-		if (*philos == NULL)
-		{
-			printf("Memory allocation failed\n");
-			exit(1);
-		}
-		data->forks = malloc(nbr_philo * sizeof(pthread_mutex_t));
-		if (data->forks == NULL)
-		{
-			printf("Memory allocation failed for forks\n");
-			exit(1);
-		}
-		init_forks(philos, data);
-		init_philo(philos, data, ac, av);
+	nbr_philo = data->number_of_philosophers;
+	*philos = malloc(nbr_philo * sizeof(t_philos));
+	if (*philos == NULL)
+	{
+		printf("Memory allocation failed\n");
+		exit(1);
 	}
+	data->forks = malloc(nbr_philo * sizeof(pthread_mutex_t));
+	if (data->forks == NULL)
+	{
+		printf("Memory allocation failed for forks\n");
+		exit(1);
+	}
+	init_forks(philos, data);
+	init_philo(philos, data, ac, av);
+}

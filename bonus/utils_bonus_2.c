@@ -25,7 +25,6 @@ void	one_philo(t_philos *philos)
 
 void	routin(t_philos *philos)
 {
-	// ft_think(philos);
 	if (philos->data->number_of_philosophers == 1)
 	{
 		one_philo(philos);
@@ -33,7 +32,7 @@ void	routin(t_philos *philos)
 	}
 	while (philos->data->number_of_philosophers != 0)
 	{
-	if (is_died(philos))
+		if (is_died(philos))
 			exit (2);
 		ft_eat(philos);
 		if (philos->nbr_of_time_to_eat == 0)
