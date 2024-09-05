@@ -1,7 +1,7 @@
 CC		= cc
-CFLAGS	=   -Wall -Wextra -Werror -g
+CFLAGS	=   -Wall -Wextra -Werror
 RM		= rm -rf
-SRCS	= main.c utils.c utils_1.c  utils_2.c  utils_3.c
+SRCS	= main.c utils.c utils_1.c  utils_2.c  utils_3.c 
 
 OBJS	= $(SRCS:.c=.o)
 NAME	= philo
@@ -12,7 +12,7 @@ all: $(NAME)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -pthread -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 clean:
 	$(RM) $(OBJS) $(OBJS_bonus)

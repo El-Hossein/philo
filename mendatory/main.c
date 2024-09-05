@@ -41,7 +41,6 @@ void	ft_detach(t_philos *philos)
 {
 	int	i;
 
-	pthread_mutex_destroy(&philos->eat_t);
 	pthread_mutex_destroy(&philos->data->print_t);
 	pthread_mutex_destroy(&philos->data->dead_t);
 	pthread_mutex_destroy(&philos->data->is_t);
