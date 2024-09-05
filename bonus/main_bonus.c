@@ -62,6 +62,12 @@ int	init_sem(t_data *data)
 		|| data->dead == SEM_FAILED || data->print == SEM_FAILED)
 	{
 		perror("sem_open");
+		if (data->forks != SEM_FAILED)
+			sem_close(data->forks);
+		if (data->dead != SEM_FAILED)
+			sem_close(data->dead);
+		if (data->print != SEM_FAILED)
+			sem_close(data->print);
 		return (1);
 	}
 	return (0);

@@ -1,5 +1,5 @@
 CC		= cc
-CFLAGS	=   -Wall -Wextra -Werror -g
+CFLAGS	=   -Wall -Wextra -Werror
 RM		= rm -rf
 SRCS	= main_bonus.c ./utils_bonus.c ./utils_bonus_1.c ./utils_bonus_2.c
 
@@ -12,7 +12,7 @@ all: $(NAME)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -pthread -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 clean:
 	$(RM) $(OBJS) $(OBJS_bonus)
