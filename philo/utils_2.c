@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:15:53 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/29 01:23:43 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/10 01:06:35 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	*routine(void *arg)
 	t_philos	*philo;
 
 	philo = (t_philos *)arg;
-	ft_think(philo);
 	if (philo->ph_id % 2 == 0)
 		ft_usleep(philo, philo->data->time_to_eat / 2);
 	while (philo->data->number_of_philosophers != 0)

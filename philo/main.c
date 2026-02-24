@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:15:50 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/29 01:46:55 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/10 01:00:57 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ int	main(int ac, char **av)
 			return (printf("bad paramme\n"), 1);
 		if (data.nbr_of_time_to_eat == 0 || data.number_of_philosophers == 0)
 			return (0);
-		create_limk_phil(&philos, &data, av, ac);
+		if (create_limk_phil(&philos, &data, av, ac) == 1)
+			return (1);
 		create_thread(philos);
 		ft_detach(philos);
 		free(philos);

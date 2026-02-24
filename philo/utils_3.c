@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:16:02 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/29 01:23:42 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/10 01:28:33 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	check_died(t_philos *philos, int i, size_t time_die, size_t time_eating)
 		pthread_mutex_lock(&philos->data->dead_t);
 		philos[i].data->is_dead = 1;
 		pthread_mutex_unlock(&philos->data->dead_t);
-		printf_philo_state(&philos[i], "is dead", 0);
+		printf_philo_state(&philos[i], "died", 0);
 		return (1);
 	}
 	return (0);

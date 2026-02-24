@@ -6,7 +6,7 @@
 /*   By: eel-ghal <eel-ghal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:16:05 by eel-ghal          #+#    #+#             */
-/*   Updated: 2024/08/29 01:27:39 by eel-ghal         ###   ########.fr       */
+/*   Updated: 2024/09/08 23:24:02 by eel-ghal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	init_data(t_data *data, int ac, char **av)
 	return (0);
 }
 
-void	init_forks(t_philos **philos, t_data *data)
+int	init_forks(t_philos **philos, t_data *data)
 {
 	int	i;
 
@@ -42,7 +42,7 @@ void	init_forks(t_philos **philos, t_data *data)
 		|| pthread_mutex_init(&data->is_t, NULL) != 0)
 	{
 		printf("Failed to initialize mutex\n");
-		exit(1);
+		return (1);
 	}
 	i = 0;
 	while (i < data->number_of_philosophers)
@@ -51,10 +51,11 @@ void	init_forks(t_philos **philos, t_data *data)
 			|| pthread_mutex_init(&(*philos)[i].eat_t, NULL) != 0)
 		{
 			printf("Failed to initialize mutex %d\n", i);
-			exit(1);
+			return (1);
 		}
 		i++;
 	}
+	return (0);
 }
 
 void	init_philo(t_philos **philos, t_data *data, int ac, char **av)
@@ -83,7 +84,7 @@ void	init_philo(t_philos **philos, t_data *data, int ac, char **av)
 	}
 }
 
-void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
+int	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
 {
 	int	nbr_philo;
 
@@ -92,14 +93,16 @@ void	create_limk_phil(t_philos **philos, t_data *data, char **av, int ac)
 	if (*philos == NULL)
 	{
 		printf("Memory allocation failed\n");
-		exit(1);
+		return (1);
 	}
 	data->forks = malloc(nbr_philo * sizeof(pthread_mutex_t));
 	if (data->forks == NULL)
 	{
 		printf("Memory allocation failed for forks\n");
-		exit(1);
+		return (1);
 	}
-	init_forks(philos, data);
+	if (init_forks(philos, data) == 1)
+		return (1);
 	init_philo(philos, data, ac, av);
+	return (0);
 }
